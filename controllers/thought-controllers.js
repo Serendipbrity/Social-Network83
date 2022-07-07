@@ -41,7 +41,7 @@ const thoughtController = {
             // });
     },
     getThoughtById({ params }, res) {
-        Thought.findOne({ _id: params.id })
+        Thought.findOne({ _id: params.thoughtId })
             .then(dbThoughtData => {
                 // if no user found send 404
                 if (!dbThoughtData) {
@@ -57,11 +57,11 @@ const thoughtController = {
     },
 
     //  create a thought
-    createThought({ params, body }, res) {
+    createThought({ body }, res) {
         Thought.create(body)
             .then((dbThoughtData) => {
                 return User.findOneAndUpdate(
-                    { _id: req.body.userId },
+                    { _id: body.userId },
                     { $push: { thoughts: dbThoughtData._id } },
                     { new: true }
                 );
@@ -94,19 +94,21 @@ const thoughtController = {
 
     //  delete user by id
     deleteThought({ params, body }, res) {
-        Thought.findOneAndDelete({ _id: req.body.userId })
+        Thought.findOneAndRemove({ _id: params.thoughtId })
             .then(dbThoughtData => {
+                console.log(dbThoughtData)
                 if (!dbThoughtData) {
                     res.status(404).json({ message: 'No thought found with this id' })
                     return;
                 }
-                return User.findByIdAndUpdate(
-                    { _id: req.body.userId },
-                    { $pull: { thoughts: dbThoughtData._id } },
+                return User.findOneAndUpdate(
+                    { thoughts: params.thoughtId },
+                    { $pull: { thoughts: params.thoughtId } },
                     { new: true }
                 );
             })
             .then(dbUserData => {
+               
                 if (!dbUserData) {
                     res.status(404).json({ message: 'No user found with this id' })
                     return;
