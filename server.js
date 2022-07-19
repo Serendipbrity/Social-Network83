@@ -11,7 +11,7 @@ const app = express();
 
 // constant for PORT (specific address of the server. Like an apartment number)
 // process.env.PORT is the environment heroku sets when run || or use chosen PORT
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 
 // ---- parse in order for our server to accept incoming data the way we need it to
 
